@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seeds of the Nile</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-wrapper">
+    <div id="game" style="width:1280px;height:720px;">
+
+      <!-- Decorative border corners -->
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <!-- Header bar -->
+      <div id="header">
+        <div id="title-text">Seeds of the Nile</div>
+        <div id="scene-indicator">
+          <span class="dot active" id="dot-0"></span>
+          <span class="dot" id="dot-1"></span>
+          <span class="dot" id="dot-2"></span>
+        </div>
+        <div id="score-display">Score: <span id="score">0</span></div>
+      </div>
+
+      <!-- Scene area -->
+      <div id="scene-area">
+        <img id="scene-bg" src="" alt="scene background" />
+
+        <!-- Scene elements positioned absolutely -->
+        <div id="scene-elements">
+          <!-- Element slots filled dynamically by game.js -->
+        </div>
+
+        <!-- Missing crop slot (the puzzle gap) -->
+        <div id="missing-slot" class="slot-glow">
+          <div id="slot-inner">
+            <span id="slot-hint">?</span>
+          </div>
+        </div>
+
+        <!-- Instruction overlay -->
+        <div id="instruction-banner">
+          <span id="instruction-text">Which seed grows this crop?</span>
+        </div>
+      </div>
+
+      <!-- Seed tray -->
+      <div id="seed-tray">
+        <div id="tray-label">Choose the correct seed</div>
+        <div id="seed-options">
+          <!-- Seed cards injected by game.js -->
+        </div>
+      </div>
+
+      <!-- Feedback overlay -->
+      <div id="feedback-overlay" class="hidden">
+        <div id="feedback-box">
+          <div id="feedback-icon"></div>
+          <div id="feedback-msg"></div>
+        </div>
+      </div>
+
+      <!-- End screen -->
+      <div id="end-screen" class="hidden">
+        <div id="end-content">
+          <div id="end-title">The Nile Blesses You!</div>
+          <div id="end-subtitle">You have mastered the sacred crops of Egypt</div>
+          <div id="end-score">Final Score: <span id="final-score">0</span></div>
+          <button id="play-again-btn">Play Again</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

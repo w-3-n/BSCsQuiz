@@ -1,0 +1,13 @@
+{
+  "name": "egyptian-puzzle-game",
+  "version": "1.0.0",
+  "description": "Ancient Egyptian agriculture puzzle web game",
+  "type": "module",
+  "scripts": {
+    "generate": "node generate-images.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}
