@@ -125,7 +125,6 @@ function createOptionCard(opt) {
   const card = document.createElement('div');
   card.className     = 'seed-card'; // keeping class for CSS
   card.dataset.id    = opt.id;
-  card.setAttribute('data-tooltip', opt.tooltip);
   card.draggable = true;
 
   const img = document.createElement('img');
