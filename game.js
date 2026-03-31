@@ -42,7 +42,6 @@ let draggedOptionId  = null;
 let solvedSlots = new Set();
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
-const sceneBg        = document.getElementById('scene-bg');
 const slotsContainer  = document.getElementById('slots-container');
 const optionTray     = document.getElementById('seed-options'); 
 const scoreDisplay   = document.getElementById('score');
@@ -73,8 +72,7 @@ function loadScene(index) {
   const scene = SCENES[index];
   instructionText.textContent = scene.instruction;
   
-  // Background is now white in CSS, no image needed
-  if (sceneBg) sceneBg.style.display = 'none';
+  // Background is now white via CSS/inline, no JS needed
 
   // Update progress dots
   document.querySelectorAll('.dot').forEach((dot, i) => {

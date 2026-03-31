@@ -105,11 +105,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #ffffff;
-}
-
-#scene-bg {
-  display: none !important;
+  background: #ffffff !important;
 }
 
 /* ─── Instruction banner ───────────────────────────────────── */
