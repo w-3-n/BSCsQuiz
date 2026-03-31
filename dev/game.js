@@ -3,7 +3,6 @@ const SCENES = [
   {
     id: 0,
     title: '生物结皮类型',
-    background: 'images/bscs/藻结皮.png', // Just as a placeholder background
     instruction: '哪些是常见的混合生物结皮类型？',
     slots: [
       { id: 1, type: 'empty', correctId: 'algal_crust',  label: '1号答案框' },
@@ -20,7 +19,6 @@ const SCENES = [
   {
     id: 1,
     title: '真核生物识别',
-    background: 'images/bscs/具鞘微鞘藻.png',
     instruction: '生物结皮的优势种里，哪些是真核生物？',
     slots: [
       { id: 1, type: 'fixed', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻（原核）' },
@@ -46,7 +44,7 @@ let solvedSlots = new Set();
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
 const sceneBg        = document.getElementById('scene-bg');
 const slotsContainer  = document.getElementById('slots-container');
-const optionTray     = document.getElementById('seed-options'); // keeping ID from original
+const optionTray     = document.getElementById('seed-options'); 
 const scoreDisplay   = document.getElementById('score');
 const feedbackOverlay= document.getElementById('feedback-overlay');
 const feedbackIcon   = document.getElementById('feedback-icon');
@@ -74,7 +72,9 @@ function loadScene(index) {
 
   const scene = SCENES[index];
   instructionText.textContent = scene.instruction;
-  sceneBg.src = scene.background;
+  
+  // Background is now white in CSS, no image needed
+  if (sceneBg) sceneBg.style.display = 'none';
 
   // Update progress dots
   document.querySelectorAll('.dot').forEach((dot, i) => {
@@ -94,7 +94,7 @@ function loadScene(index) {
     inner.className = 'slot-inner';
 
     if (slotData.type === 'fixed') {
-      inner.innerHTML = `<img src="${slotData.image}" alt="${slotData.label}"><span class="fixed-label" style="position:absolute;bottom:5px;font-size:12px;background:rgba(0,0,0,0.5);padding:2px 5px;border-radius:4px;">${slotData.label}</span>`;
+      inner.innerHTML = `<img src="${slotData.image}" alt="${slotData.label}"><span class="fixed-label" style="position:absolute;bottom:5px;font-size:12px;background:rgba(0,0,0,0.5);padding:2px 5px;border-radius:4px;color:white;">${slotData.label}</span>`;
       slotDiv.classList.remove('slot-glow');
       slotDiv.classList.add('correct');
       solvedSlots.add(slotData.id);
@@ -123,7 +123,7 @@ function loadScene(index) {
 
 function createOptionCard(opt) {
   const card = document.createElement('div');
-  card.className     = 'seed-card'; // keeping class for CSS
+  card.className     = 'seed-card'; 
   card.dataset.id    = opt.id;
   card.draggable = true;
 
@@ -184,7 +184,6 @@ function handleAnswer(optionId, slotId) {
   const card    = document.querySelector(`.seed-card[data-id="${optionId}"]`);
 
   if (isCorrect) {
-    // Correct
     solvedSlots.add(slotId);
     score += 100;
     scoreDisplay.textContent = score;
@@ -200,7 +199,6 @@ function handleAnswer(optionId, slotId) {
 
     showFeedback('correct', opt.label);
     
-    // Check if scene complete
     if (solvedSlots.size === scene.slots.length) {
       setTimeout(() => {
         hideFeedback();
@@ -215,7 +213,6 @@ function handleAnswer(optionId, slotId) {
       setTimeout(hideFeedback, 1000);
     }
   } else {
-    // Wrong
     score = Math.max(0, score - 100);
     scoreDisplay.textContent = score;
 

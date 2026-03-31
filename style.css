@@ -95,7 +95,7 @@ body {
   letter-spacing: 2px;
 }
 
-/* ─── Scene area (Changed background to white) ─────────────── */
+/* ─── Scene area (Pure white background) ───────────────────── */
 #scene-area {
   position: absolute;
   top: 60px;
@@ -105,11 +105,11 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #ffffff; /* Pure white background */
+  background: #ffffff;
 }
 
 #scene-bg {
-  display: none; /* Hide the background image as requested */
+  display: none !important;
 }
 
 /* ─── Instruction banner ───────────────────────────────────── */
@@ -145,7 +145,7 @@ body {
 .answer-slot {
   width: 240px;
   height: 240px;
-  background: rgba(0, 0, 0, 0.05); /* Light gray for slots on white bg */
+  background: rgba(0, 0, 0, 0.05);
   border: 4px dashed #4a6d4a;
   border-radius: 16px;
   display: flex;
@@ -201,7 +201,7 @@ body {
   border-color: #ff8b94 !important;
 }
 
-/* ─── Species Tray ─────────────────────────────────────────── */
+/* ─── Species Tray (Dark design) ───────────────────────────── */
 #seed-tray {
   position: absolute;
   bottom: 0; left: 0; right: 0;
@@ -232,7 +232,7 @@ body {
   justify-content: center;
 }
 
-/* ─── Species cards (Restored Original Dark Design) ────────── */
+/* ─── Species cards (Original Dark Design) ─────────────────── */
 .seed-card {
   width: 160px;
   height: 90px;
