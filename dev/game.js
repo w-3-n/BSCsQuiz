@@ -23,7 +23,7 @@ const SCENES = [
     slots: [
       { id: 1, type: 'fixed', image: 'images/bscs/银叶真藓.jpg', label: '银叶真藓' },
       { id: 2, type: 'empty', correctId: 'chlorella', label: '2号答案框' },
-      { id: 3, type: 'empty', correctId: 'microcoleus', label: '3号答案框' },
+      { id: 3, type: 'empty', correctId: 'chlamydomonas', label: '3号答案框' },
     ],
     options: [
       { id: 'nostoc',    image: 'images/bscs/念珠藻.png',   label: '念珠藻',   tooltip: '原核生物 - 蓝藻门' },
