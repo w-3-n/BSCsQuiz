@@ -21,15 +21,15 @@ const SCENES = [
     title: '真核生物识别',
     instruction: '生物结皮的优势种里，哪些是真核生物？',
     slots: [
-      { id: 1, type: 'fixed', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻' },
+      { id: 1, type: 'fixed', image: 'images/bscs/银叶真藓.jpg', label: '银叶真藓' },
       { id: 2, type: 'empty', correctId: 'chlorella', label: '2号答案框' },
-      { id: 3, type: 'empty', correctId: 'bryum',     label: '3号答案框' },
+      { id: 3, type: 'empty', correctId: 'microcoleus', label: '3号答案框' },
     ],
     options: [
       { id: 'nostoc',    image: 'images/bscs/念珠藻.png',   label: '念珠藻',   tooltip: '原核生物 - 蓝藻门' },
       { id: 'chlorella', image: 'images/bscs/小球藻.png',   label: '小球藻',   tooltip: '真核生物 - 绿藻门' },
-      { id: 'cyanolichen',image: 'images/bscs/蓝藻型地衣.png', label: '蓝藻型地衣', tooltip: '复合体 - 含原核蓝藻' },
-      { id: 'bryum',     image: 'images/bscs/银叶真藓.jpg', label: '银叶真藓', tooltip: '真核生物 - 藓纲' },
+      { id: 'chlamydomonas', image: 'images/bscs/衣藻属.png', label: '衣藻属', tooltip: '真核生物 - 绿藻门' },
+      { id: 'microcoleus', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻', tooltip: '原核生物 - 蓝藻门' },
     ],
   },
 ];
