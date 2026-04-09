@@ -21,7 +21,7 @@ const SCENES = [
     title: '真核生物识别',
     instruction: '生物结皮的优势种里，哪些是真核生物？',
     slots: [
-      { id: 1, type: 'fixed', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻（原核）' },
+      { id: 1, type: 'fixed', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻' },
       { id: 2, type: 'empty', correctId: 'chlorella', label: '2号答案框' },
       { id: 3, type: 'empty', correctId: 'bryum',     label: '3号答案框' },
     ],

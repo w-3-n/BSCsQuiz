@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>生物结皮知多少</title>
+  <style>
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  color: #fff;
+}
+
+/* ─── Scaling wrapper ──────────────────────────────────────── */
+#game-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game {
+  position: relative;
+  overflow: hidden;
+  background: #2d3436;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  border: 4px solid #4a6d4a;
+  border-radius: 8px;
+}
+
+/* ─── Decorative corner ornaments (Biological theme) ────────── */
+.corner {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='10' fill='%234a6d4a' opacity='0.5'/%3E%3Ccircle cx='20' cy='20' r='5' fill='%234a6d4a' opacity='0.3'/%3E%3Ccircle cx='60' cy='60' r='8' fill='%234a6d4a' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+.corner-tl { top: 0; left: 0; }
+.corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+.corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.corner-br { bottom: 0; right: 0; transform: scale(-1); }
+
+/* ─── Header ───────────────────────────────────────────────── */
+#header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, #1b301b 0%, #2d4d2d 100%);
+  border-bottom: 2px solid #4a6d4a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 100;
+}
+
+#title-text {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #a8e6cf;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#scene-indicator {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #333;
+  border: 2px solid #4a6d4a;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+.dot.active {
+  background: #a8e6cf;
+  box-shadow: 0 0 10px #a8e6cf;
+}
+
+.dot.solved {
+  background: #50c878;
+  box-shadow: 0 0 10px #50c878;
+}
+
+#score-display {
+  color: #a8e6cf;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+/* ─── Scene area (Pure white background) ───────────────────── */
+#scene-area {
+  position: absolute;
+  top: 60px;
+  bottom: 140px;
+  left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ffffff !important;
+}
+
+/* ─── Instruction banner ───────────────────────────────────── */
+#instruction-banner {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(45, 52, 54, 0.9);
+  border: 2px solid #a8e6cf;
+  border-radius: 30px;
+  padding: 10px 40px;
+  color: #a8e6cf;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  z-index: 50;
+}
+
+/* ─── Slots Container ───────────────────────────────────────── */
+#slots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  z-index: 40;
+  position: relative;
+}
+
+.answer-slot {
+  width: 240px;
+  height: 240px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 4px dashed #4a6d4a;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.slot-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-hint {
+  font-size: 72px;
+  color: #4a6d4a;
+  opacity: 0.2;
+  font-weight: bold;
+}
+
+.slot-inner img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.slot-glow:hover {
+  background: rgba(74, 109, 74, 0.1);
+  transform: scale(1.05);
+  border-color: #4a6d4a;
+}
+
+.drag-over {
+  background: rgba(168, 230, 207, 0.2) !important;
+  border-color: #4a6d4a !important;
+  box-shadow: 0 0 30px rgba(74, 109, 74, 0.3);
+}
+
+.correct {
+  border-style: solid;
+  border-color: #50c878 !important;
+  background: rgba(80, 200, 120, 0.1);
+}
+
+.wrong {
+  animation: shake 0.5s;
+  border-color: #ff8b94 !important;
+}
+
+/* ─── Species Tray (Dark design) ───────────────────────────── */
+#seed-tray {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 140px;
+  background: linear-gradient(0deg, #1a1a1a 0%, #2d3436 100%);
+  border-top: 3px solid #4a6d4a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 100;
+  padding: 0 50px;
+}
+
+#tray-label {
+  color: #a8e6cf;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+#seed-options {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Species cards (Original Dark Design) ─────────────────── */
+.seed-card {
+  width: 160px;
+  height: 90px;
+  background: #3d3d3d;
+  border: 2px solid #4a6d4a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: grab;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.seed-card:hover {
+  background: #4a4a4a;
+  border-color: #a8e6cf;
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.seed-card.selected {
+  background: #1b301b;
+  border-color: #a8e6cf;
+  box-shadow: 0 0 20px #a8e6cf;
+  transform: translateY(-8px);
+}
+
+.seed-card.dragging {
+  opacity: 0.5;
+}
+
+.seed-card.used {
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+
+.seed-card img {
+  height: 50px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+.seed-card-label {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ─── Feedback overlay ─────────────────────────────────────── */
+#feedback-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  background: rgba(0,0,0,0.7);
+}
+
+#feedback-overlay.hidden { display: none; }
+
+#feedback-box {
+  background: #2d3436;
+  border: 3px solid #4a6d4a;
+  border-radius: 20px;
+  padding: 40px 60px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(0,0,0,0.8);
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+#feedback-icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+}
+
+#feedback-msg {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ─── End screen ───────────────────────────────────────────── */
+#end-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  background: rgba(0,0,0,0.9);
+}
+
+#end-screen.hidden { display: none; }
+
+#end-content {
+  text-align: center;
+}
+
+#end-title {
+  color: #a8e6cf;
+  font-size: 64px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px rgba(168,230,207,0.5);
+}
+
+#end-subtitle {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+#end-score {
+  color: #50c878;
+  font-size: 32px;
+  margin-bottom: 50px;
+}
+
+#play-again-btn {
+  background: #4a6d4a;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#play-again-btn:hover {
+  background: #50c878;
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(80,200,120,0.4);
+}
+
+/* ─── Animations ───────────────────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.shimmer {
+  animation: shimmerAnim 1s ease 2;
+}
+
+@keyframes shimmerAnim {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.5); }
+  100% { filter: brightness(1); }
+}
+  </style>
+</head>
+<body>
+  <div id="game-wrapper">
+    <div id="game" style="width:1280px;height:720px;">
+
+      <!-- Decorative border corners -->
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <!-- Header bar -->
+      <div id="header">
+        <div id="title-text">生物结皮知多少</div>
+        <div id="scene-indicator">
+          <span class="dot active" id="dot-0"></span>
+          <span class="dot" id="dot-1"></span>
+        </div>
+        <div id="score-display">Score: <span id="score">0</span></div>
+      </div>
+
+      <!-- Scene area -->
+      <div id="scene-area" style="background: white;">
+        <!-- Scene elements positioned absolutely -->
+        <div id="scene-elements">
+          <!-- Element slots filled dynamically by game.js -->
+        </div>
+
+        <!-- Multiple missing slots (the puzzle gaps) -->
+        <div id="slots-container">
+          <div id="slot-1" class="slot-glow answer-slot" data-slot="1">
+            <div class="slot-inner"><span class="slot-hint">1</span></div>
+          </div>
+          <div id="slot-2" class="slot-glow answer-slot" data-slot="2">
+            <div class="slot-inner"><span class="slot-hint">2</span></div>
+          </div>
+          <div id="slot-3" class="slot-glow answer-slot" data-slot="3">
+            <div class="slot-inner"><span class="slot-hint">3</span></div>
+          </div>
+        </div>
+
+        <!-- Instruction overlay -->
+        <div id="instruction-banner">
+          <span id="instruction-text">Which seed grows this crop?</span>
+        </div>
+      </div>
+
+      <!-- Seed tray -->
+      <div id="seed-tray">
+        <div id="tray-label">请选择你的答案</div>
+        <div id="seed-options">
+          <!-- Seed cards injected by game.js -->
+        </div>
+      </div>
+
+      <!-- Feedback overlay -->
+      <div id="feedback-overlay" class="hidden">
+        <div id="feedback-box">
+          <div id="feedback-icon"></div>
+          <div id="feedback-msg"></div>
+        </div>
+      </div>
+
+      <!-- End screen -->
+      <div id="end-screen" class="hidden">
+        <div id="end-content">
+          <div id="end-title">挑战完成！</div>
+          <div id="end-subtitle">你已经掌握了生物土壤结皮一点基础概念</div>
+          <div id="end-score">最终得分: <span id="final-score">0</span></div>
+          <button id="play-again-btn">再玩一次</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+// ─── Scene Data ─────────────────────────────────────────────────────────────
+const SCENES = [
+  {
+    id: 0,
+    title: '生物结皮类型',
+    instruction: '哪些是常见的生物结皮类型？',
+    slots: [
+      { id: 1, type: 'empty', correctId: 'algal_crust',  label: '1号答案框' },
+      { id: 2, type: 'empty', correctId: 'lichen_crust', label: '2号答案框' },
+      { id: 3, type: 'empty', correctId: 'moss_crust',   label: '3号答案框' },
+    ],
+    options: [
+      { id: 'algal_crust',  image: 'images/bscs/藻结皮.png',   label: '藻结皮', tooltip: '由藻类、真菌和细菌组成的混合结皮' },
+      { id: 'lichen_crust', image: 'images/bscs/地衣结皮.png', label: '地衣结皮', tooltip: '地衣作为优势种的生物结皮' },
+      { id: 'moss_crust_d', image: 'images/bscs/苔结皮.png',   label: '苔结皮', tooltip: '（干扰项）苔类结皮' },
+      { id: 'moss_crust',   image: 'images/bscs/藓结皮.png',   label: '藓结皮', tooltip: '藓类作为优势种的生物结皮' },
+    ],
+  },
+  {
+    id: 1,
+    title: '真核生物识别',
+    instruction: '生物结皮的优势种里，哪些是真核生物？',
+    slots: [
+      { id: 1, type: 'fixed', image: 'images/bscs/具鞘微鞘藻.png', label: '具鞘微鞘藻' },
+      { id: 2, type: 'empty', correctId: 'chlorella', label: '2号答案框' },
+      { id: 3, type: 'empty', correctId: 'bryum',     label: '3号答案框' },
+    ],
+    options: [
+      { id: 'nostoc',    image: 'images/bscs/念珠藻.png',   label: '念珠藻',   tooltip: '原核生物 - 蓝藻门' },
+      { id: 'chlorella', image: 'images/bscs/小球藻.png',   label: '小球藻',   tooltip: '真核生物 - 绿藻门' },
+      { id: 'cyanolichen',image: 'images/bscs/蓝藻型地衣.png', label: '蓝藻型地衣', tooltip: '复合体 - 含原核蓝藻' },
+      { id: 'bryum',     image: 'images/bscs/银叶真藓.jpg', label: '银叶真藓', tooltip: '真核生物 - 藓纲' },
+    ],
+  },
+];
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentSceneIndex = 0;
+let score = 0;
+let selectedOptionId = null;
+let draggedOptionId  = null;
+let solvedSlots = new Set();
+
+// ─── DOM refs ─────────────────────────────────────────────────────────────────
+const sceneBg        = document.getElementById('scene-bg');
+const slotsContainer  = document.getElementById('slots-container');
+const optionTray     = document.getElementById('seed-options'); 
+const scoreDisplay   = document.getElementById('score');
+const feedbackOverlay= document.getElementById('feedback-overlay');
+const feedbackIcon   = document.getElementById('feedback-icon');
+const feedbackMsg    = document.getElementById('feedback-msg');
+const endScreen      = document.getElementById('end-screen');
+const finalScore     = document.getElementById('final-score');
+const playAgainBtn   = document.getElementById('play-again-btn');
+const instructionText= document.getElementById('instruction-text');
+
+// ─── Shuffle helper ───────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ─── Load a scene ─────────────────────────────────────────────────────────────
+function loadScene(index) {
+  solvedSlots.clear();
+  selectedOptionId = null;
+  draggedOptionId  = null;
+
+  const scene = SCENES[index];
+  instructionText.textContent = scene.instruction;
+  
+  // Background is now white in CSS, no image needed
+  if (sceneBg) sceneBg.style.display = 'none';
+
+  // Update progress dots
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'solved');
+    if (i < index)       dot.classList.add('solved');
+    else if (i === index) dot.classList.add('active');
+  });
+
+  // Clear and Build Slots
+  slotsContainer.innerHTML = '';
+  scene.slots.forEach(slotData => {
+    const slotDiv = document.createElement('div');
+    slotDiv.className = 'answer-slot slot-glow';
+    slotDiv.dataset.slotId = slotData.id;
+
+    const inner = document.createElement('div');
+    inner.className = 'slot-inner';
+
+    if (slotData.type === 'fixed') {
+      inner.innerHTML = `<img src="${slotData.image}" alt="${slotData.label}"><span class="fixed-label" style="position:absolute;bottom:5px;font-size:12px;background:rgba(0,0,0,0.5);padding:2px 5px;border-radius:4px;color:white;">${slotData.label}</span>`;
+      slotDiv.classList.remove('slot-glow');
+      slotDiv.classList.add('correct');
+      solvedSlots.add(slotData.id);
+    } else {
+      inner.innerHTML = `<span class="slot-hint">${slotData.id}</span>`;
+      
+      // Events
+      slotDiv.ondragover  = (e) => { e.preventDefault(); slotDiv.classList.add('drag-over'); };
+      slotDiv.ondragleave = ()  => { slotDiv.classList.remove('drag-over'); };
+      slotDiv.ondrop      = (e) => { e.preventDefault(); slotDiv.classList.remove('drag-over'); handleAnswer(draggedOptionId, slotData.id); };
+      slotDiv.onclick     = ()  => { if (selectedOptionId) handleAnswer(selectedOptionId, slotData.id); };
+    }
+
+    slotDiv.appendChild(inner);
+    slotsContainer.appendChild(slotDiv);
+  });
+
+  // Build Options Tray
+  optionTray.innerHTML = '';
+  const shuffledOptions = shuffle(scene.options);
+  shuffledOptions.forEach(opt => {
+    const card = createOptionCard(opt);
+    optionTray.appendChild(card);
+  });
+}
+
+function createOptionCard(opt) {
+  const card = document.createElement('div');
+  card.className     = 'seed-card'; 
+  card.dataset.id    = opt.id;
+  card.draggable = true;
+
+  const img = document.createElement('img');
+  img.src = opt.image;
+  img.alt = opt.label;
+
+  const lbl = document.createElement('span');
+  lbl.className   = 'seed-card-label';
+  lbl.textContent = opt.label;
+
+  card.appendChild(img);
+  card.appendChild(lbl);
+
+  card.onclick = () => {
+    if (card.classList.contains('used')) return;
+    document.querySelectorAll('.seed-card.selected').forEach(c => c.classList.remove('selected'));
+    if (selectedOptionId === opt.id) {
+      selectedOptionId = null;
+    } else {
+      selectedOptionId = opt.id;
+      card.classList.add('selected');
+    }
+  };
+
+  card.ondragstart = (e) => {
+    if (card.classList.contains('used')) { e.preventDefault(); return; }
+    draggedOptionId = opt.id;
+    card.classList.add('dragging');
+  };
+
+  card.ondragend = () => card.classList.remove('dragging');
+
+  return card;
+}
+
+function handleAnswer(optionId, slotId) {
+  if (!optionId || !slotId) return;
+  if (solvedSlots.has(slotId)) return;
+
+  const scene = SCENES[currentSceneIndex];
+  const opt   = scene.options.find(o => o.id === optionId);
+
+  // Get all valid correct IDs for this scene that haven't been placed yet
+  const placedCorrectIds = Array.from(document.querySelectorAll('.answer-slot.correct img'))
+    .map(img => {
+      const optMatch = scene.options.find(o => o.label === img.alt);
+      return optMatch ? optMatch.id : null;
+    }).filter(id => id !== null);
+
+  const allPossibleCorrectIds = scene.slots
+    .filter(s => s.type === 'empty')
+    .map(s => s.correctId);
+  
+  const isCorrect = allPossibleCorrectIds.includes(optionId) && !placedCorrectIds.includes(optionId);
+
+  const slotDiv = document.querySelector(`.answer-slot[data-slot-id="${slotId}"]`);
+  const card    = document.querySelector(`.seed-card[data-id="${optionId}"]`);
+
+  if (isCorrect) {
+    solvedSlots.add(slotId);
+    score += 100;
+    scoreDisplay.textContent = score;
+
+    const inner = slotDiv.querySelector('.slot-inner');
+    inner.innerHTML = `<img src="${opt.image}" alt="${opt.label}" class="shimmer">`;
+    slotDiv.classList.remove('slot-glow');
+    slotDiv.classList.add('correct');
+    
+    if (card) card.classList.add('used');
+    selectedOptionId = null;
+    document.querySelectorAll('.seed-card.selected').forEach(c => c.classList.remove('selected'));
+
+    showFeedback('correct', opt.label);
+    
+    if (solvedSlots.size === scene.slots.length) {
+      setTimeout(() => {
+        hideFeedback();
+        if (currentSceneIndex < SCENES.length - 1) {
+          currentSceneIndex++;
+          loadScene(currentSceneIndex);
+        } else {
+          showEndScreen();
+        }
+      }, 1500);
+    } else {
+      setTimeout(hideFeedback, 1000);
+    }
+  } else {
+    score = Math.max(0, score - 100);
+    scoreDisplay.textContent = score;
+
+    slotDiv.classList.add('wrong');
+    setTimeout(() => slotDiv.classList.remove('wrong'), 500);
+    
+    if (card) {
+      card.classList.add('wrong-seed');
+      setTimeout(() => card.classList.remove('wrong-seed'), 500);
+    }
+    
+    showFeedback('wrong', opt.label);
+    setTimeout(hideFeedback, 1000);
+  }
+}
+
+function showFeedback(type, label) {
+  feedbackOverlay.classList.remove('hidden');
+  if (type === 'correct') {
+    feedbackIcon.textContent = '🌱';
+    feedbackMsg.textContent  = `${label} — 正确！`;
+    feedbackBox_style('rgba(20,80,20,0.9)', '#a8e6cf');
+  } else {
+    feedbackIcon.textContent = '❌';
+    feedbackMsg.textContent  = `好像不太对。再想想！`;
+    feedbackBox_style('rgba(80,10,10,0.9)', '#ff8b94');
+  }
+}
+
+function feedbackBox_style(bg, border) {
+  const box = document.getElementById('feedback-box');
+  box.style.background   = bg;
+  box.style.borderColor  = border;
+}
+
+function hideFeedback() {
+  feedbackOverlay.classList.add('hidden');
+}
+
+function showEndScreen() {
+  document.querySelectorAll('.dot').forEach(dot => dot.classList.add('solved'));
+  finalScore.textContent = score;
+  endScreen.classList.remove('hidden');
+}
+
+playAgainBtn.onclick = () => {
+  currentSceneIndex = 0;
+  score = 0;
+  scoreDisplay.textContent = 0;
+  endScreen.classList.add('hidden');
+  loadScene(0);
+};
+
+// ─── Start ────────────────────────────────────────────────────────────────────
+loadScene(0);
+  </script>
+</body>
+</html>
