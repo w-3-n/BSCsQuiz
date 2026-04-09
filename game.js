@@ -3,7 +3,7 @@ const SCENES = [
   {
     id: 0,
     title: '生物结皮类型',
-    instruction: '哪些是常见的混合生物结皮类型？',
+    instruction: '哪些是常见的生物结皮类型？',
     slots: [
       { id: 1, type: 'empty', correctId: 'algal_crust',  label: '1号答案框' },
       { id: 2, type: 'empty', correctId: 'lichen_crust', label: '2号答案框' },
@@ -42,6 +42,7 @@ let draggedOptionId  = null;
 let solvedSlots = new Set();
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
+const sceneBg        = document.getElementById('scene-bg');
 const slotsContainer  = document.getElementById('slots-container');
 const optionTray     = document.getElementById('seed-options'); 
 const scoreDisplay   = document.getElementById('score');
@@ -72,7 +73,8 @@ function loadScene(index) {
   const scene = SCENES[index];
   instructionText.textContent = scene.instruction;
   
-  // Background is now white via CSS/inline, no JS needed
+  // Background is now white in CSS, no image needed
+  if (sceneBg) sceneBg.style.display = 'none';
 
   // Update progress dots
   document.querySelectorAll('.dot').forEach((dot, i) => {
