@@ -213,7 +213,7 @@ function handleAnswer(optionId, slotId) {
       setTimeout(hideFeedback, 1000);
     }
   } else {
-    score = Math.max(0, score - 100);
+    score -= 100;
     scoreDisplay.textContent = score;
 
     slotDiv.classList.add('wrong');
